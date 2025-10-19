@@ -10,19 +10,40 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  //  Regex patterns
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  /*
+    Password Rules:
+    - Minimum 8 characters
+    - At least 1 uppercase letter
+    - At least 1 lowercase letter
+    - At least 1 number
+    - At least 1 special character
+  */
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!email || !password) return toast.error("Please fill all fields");
+
+    // Client-side validations
+    if (!email || !password) {
+      return toast.error("Please fill all fields");
+    }
+    if (!emailRegex.test(email)) {
+      return toast.error("Please enter a valid email address");
+    }
+    if (!passwordRegex.test(password)) {
+      return toast.error(
+        "Password must contain at least 8 characters, one uppercase, one lowercase, one number, and one special character"
+      );
+    }
 
     try {
       setLoading(true);
       const res = await API.post("/auth/register", { email, password });
-
       toast.success("Heads up! Registered successfully. Now you can login.");
-
-      // Optional: navigate to login instead of dashboard
       navigate("/login");
-
       setEmail("");
       setPassword("");
     } catch (err) {
@@ -34,7 +55,7 @@ export default function Register() {
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
-      {/* Left side image (for large screens) */}
+      {/* Left side image */}
       <Grid
         item
         xs={false}
@@ -45,10 +66,10 @@ export default function Register() {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          display: { xs: "none", sm: "block" }, // Hide image on small screens
+          display: { xs: "none", sm: "block" },
         }}
       />
-      
+
       {/* Right side form */}
       <Grid
         item
@@ -59,18 +80,19 @@ export default function Register() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center", // Vertically center content
-          alignItems: "center", // Horizontally center content
+          justifyContent: "center",
+          alignItems: "center",
           bgcolor: "background.paper",
           borderRadius: 2,
           boxShadow: 3,
-          p: { xs: 2, sm: 4 }, // Padding adjustment based on screen size
-          height: "100vh", // Make the form take the full screen height
+          p: { xs: 2, sm: 4 },
+          height: "100vh",
         }}
       >
         <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
           Register
         </Typography>
+
         <form onSubmit={handleRegister} style={{ width: "100%" }}>
           <TextField
             variant="outlined"
@@ -80,9 +102,6 @@ export default function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            sx={{
-              marginBottom: { xs: 1, sm: 2 }, // Adjust spacing for mobile vs. desktop
-            }}
           />
           <TextField
             variant="outlined"
@@ -93,9 +112,7 @@ export default function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            sx={{
-              marginBottom: { xs: 1, sm: 2 }, // Adjust spacing for mobile vs. desktop
-            }}
+            helperText="At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol"
           />
           <Button
             type="submit"
@@ -119,7 +136,7 @@ export default function Register() {
             <Grid item>
               <Link to="/login" style={{ textDecoration: "none" }}>
                 <Typography variant="body2" color="primary.main">
-                  {"Already have an account? Login here"}
+                  Already have an account? Login here
                 </Typography>
               </Link>
             </Grid>
