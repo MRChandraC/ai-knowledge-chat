@@ -1,0 +1,3 @@
+[submodule "ai-Bot/ai-Bot/ai-knowledge-chat"]
+	path = ai-Bot/ai-Bot/ai-knowledge-chat
+	url = https://github.com/MRChandraC/ai-knowledge-chat.git
